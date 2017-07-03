@@ -1,0 +1,17 @@
+{
+  "config": {
+    "accessKeyId": "AKIAIMJ42QRGBM3SSEIA",
+    "secretAccessKey": "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",
+    "region": "eu-west-1"
+  },
+  "s3": {
+    "region": "eu-west-1",
+    "params": {
+      "Bucket": "likeeat-dev"
+    }
+  },
+  "path": {
+    "upload": "tmp/upload/",
+    "download": "tmp/download/"
+  }
+}

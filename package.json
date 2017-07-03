@@ -1,0 +1,46 @@
+{
+  "name": "boxobox-api",
+  "version": "1.0.0",
+  "description": "api for boxobox project",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eslint": "node_modules/.bin/eslint src/**",
+    "dev": "gulp start:dev",
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Keuwa/BoxoboxApi.git"
+  },
+  "author": "vincent kocupyr & vincent durpoix",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Keuwa/BoxoboxApi/issues"
+  },
+  "homepage": "https://github.com/Keuwa/BoxoboxApi#readme",
+  "dependencies": {
+    "apidoc-swagger": "https://github.com/ridergoster/apidoc-swagger/tarball/master",
+    "bcrypt-nodejs": "0.0.3",
+    "bluebird": "^3.5.0",
+    "body-parser": "^1.17.2",
+    "cors": "^2.8.3",
+    "express": "^4.15.3",
+    "jsonwebtoken": "^7.4.1",
+    "lodash": "^4.17.4",
+    "mongoose": "^4.10.8",
+    "mongoose-simple-random": "^0.4.1",
+    "passport": "^0.3.2",
+    "passport-jwt": "^2.2.1",
+    "socket.io": "^2.0.3",
+    "swagger-ui-middleware": "^1.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.1.1",
+    "gulp": "^3.9.1",
+    "gulp-apidoc-swagger": "^0.2.2",
+    "gulp-develop-server": "^0.5.2",
+    "gulp-shell": "^0.6.3",
+    "run-sequence": "^2.0.0"
+  }
+}

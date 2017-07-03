@@ -1,0 +1,6 @@
+{
+  "auth": {
+    "secretKey": "s3cr3t_t0k3n",
+    "expiresIn": "60d"
+  }
+}

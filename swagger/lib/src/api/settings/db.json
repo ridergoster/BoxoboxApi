@@ -1,0 +1,6 @@
+{
+  "url": {
+    "dev": "mongodb://localhost:27017/likeeat-dev",
+    "prod": "mongodb://likeeat:kCUlN35bTc4F@ds033744.mlab.com:33744/likeeat"
+  }
+}
