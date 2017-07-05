@@ -1,40 +1,48 @@
 // Init variable
 var mongoose = require('mongoose');
-var QuestionModel = require('./model');
+var AnswerModel = require('./model');
 var _ = require('lodash');
 
 /**
  *
- * @api {get} /api/questions
- * @apiGroup Questions
- * @apiDescription request all questions
+ * @api {get} /api/answers
+ * @apiGroup Answers
+ * @apiDescription request all answers
  * @apiParam {query} [after] date you want record to be after
  * @apiParam {query} [before] date you want record to be before
  * @apiParam {query} [orderDate] order results by date [ASC, DESC]
+ * @apiParam {query} [user] user you want answer from
+ * @apiParam {query} [question] question you want answer from
  *
  */
 exports.get = function(req, res) {
   var research = {};
   var sort = {'date': -1};
+
   if (_.has(req.query, 'orderDate')) {
     sort.date = req.query.orderDate === 'ASC' ? 1 : -1;
   }
-
   if (_.has(req.query, 'before')) {
     _.defaultsDeep(research, { 'date': { '$lt': new Date(req.query.before) } });
   }
   if (_.has(req.query, 'after')) {
     _.defaultsDeep(research, { 'date': { '$gte': new Date(req.query.after) } });
   }
+  if (_.has(req.query, 'user')) {
+    _.defaultsDeep(research, { 'user': req.query.user });
+  }
+  if (_.has(req.query, 'question')) {
+    _.defaultsDeep(research, { 'question': req.query.question });
+  }
 
-  QuestionModel.find(research)
+  AnswerModel.find(research)
   .sort(sort)
-  .exec(function(err, questions) {
+  .exec(function(err, answers) {
       if (err) {
         res.status(400).send({ error: 'BAD_REQUEST', code: 400});
       }
       else {
-        res.json(questions);
+        res.json(answers);
       }
     })
   ;
@@ -42,34 +50,35 @@ exports.get = function(req, res) {
 
 /**
  *
- * @api {post} /api/questions
- * @apiGroup Questions
- * @apiDescription create a question
- * @apiParam {String} question question to ask
- * @apiParam {String} answer_left answer from left
- * @apiParam {String} answer_right answer from right
+ * @api {post} /api/answers
+ * @apiGroup Answers
+ * @apiDescription create an answers
+ * @apiParam {String} question questionId you answer
+ * @apiParam {String} answer response in enum [LEFT, RIGHT]
  *
  */
 exports.post = function post(req,res) {
-  var question = new QuestionModel();
-  question.user = req.user._id;
-  question.date = new Date();
-  _.extend(question, req.body);
-  question.save(function(err) {
+  var answer = new AnswerModel();
+  answer.user = req.user._id;
+  answer.question = mongoose.Types.ObjectId(req.body.question);
+  answer.answer = req.body.answer;
+  answer.date = new Date();
+
+  answer.save(function(err) {
     if (err) {
       res.status(400).send({ error: 'BAD_REQUEST', code: 400, log: err});
     }
     else {
-      QuestionModel.findOne({_id: question._id})
-        .exec(function(err, resQuestion) {
+      AnswerModel.findOne({_id: answer._id})
+        .exec(function(err, resAnswer) {
           if (err) {
             res.status(400).send({ error: 'BAD_REQUEST', code: 400, log: err});
           }
-          else if (!resQuestion) {
+          else if (!resAnswer) {
             res.status(404).send({ error: 'NOT_FOUND', code: 404});
           }
           else {
-            res.json(resQuestion);
+            res.json(resAnswer);
           }
         })
       ;
@@ -79,46 +88,24 @@ exports.post = function post(req,res) {
 
 /**
  *
- * @api {get} /api/questions/last
- * @apiGroup Questions
- * @apiDescription get the last question
- *
- */
-exports.getLast = function getLast(req, res) {
-  QuestionModel.findOne()
-  .sort({date: -1}).exec(function(err, question) {
-    if (err){
-      res.status(400).send({ error: 'BAD_REQUEST', code: 400});
-    }
-    else if (!question) {
-      res.status(404).send({ error: 'NOT_FOUND', code: 404});
-    }
-    else {
-      res.json(question);
-    }
-  });
-}
-
-/**
- *
- * @api {get} /api/questions/:id
- * @apiGroup Questions
- * @apiDescription request question by id
- * @apiParam {String} id id of the question
+ * @api {get} /api/answers/:id
+ * @apiGroup Answers
+ * @apiDescription request an answer by id
+ * @apiParam {String} id id of the answer
  *
  */
 exports.getById = function getById(req, res) {
   var id = mongoose.Types.ObjectId(req.params.id);
-  QuestionModel.findOne({_id: id})
-    .exec(function(err, question) {
+  AnswerModel.findOne({_id: id})
+    .exec(function(err, answer) {
       if (err){
         res.status(400).send({ error: 'BAD_REQUEST', code: 400});
       }
-      else if (!question) {
+      else if (!answer) {
         res.status(404).send({ error: 'NOT_FOUND', code: 404});
       }
       else {
-        res.json(question);
+        res.json(answer);
       }
     })
   ;
@@ -126,32 +113,32 @@ exports.getById = function getById(req, res) {
 
 /**
  *
- * @api {delete} /api/questions/:id
- * @apiGroup Questions
- * @apiDescription delete a question
- * @apiParam {String} id id of the question
+ * @api {delete} /api/answers/:id
+ * @apiGroup Answers
+ * @apiDescription delete an answer
+ * @apiParam {String} id id of the answer
  *
  */
 exports.del = function del(req, res) {
   var id = mongoose.Types.ObjectId(req.params.id);
-  QuestionModel.findOne({ _id: id }, function (err, question) {
+  AnswerModel.findOne({ _id: id }, function (err, answer) {
     if (err) {
       res.status(400).send({ error: 'BAD_REQUEST', code: 400, log: err});
     }
-    else if (!question) {
+    else if (!answer) {
       res.status(404).json({ error: 'NOT_FOUND', code: 404});
     }
     else {
-      QuestionModel.findOneAndRemove({ _id: id })
-        .exec(function (err, resQuestion) {
+      AnswerModel.findOneAndRemove({ _id: id })
+        .exec(function (err, resAnswer) {
           if (err) {
             res.status(400).send({ error: 'BAD_REQUEST', code: 400});
           }
-          else if (!resQuestion) {
+          else if (!resAnswer) {
             res.status(404).send({ error: 'NOT_FOUND', code: 404});
           }
           else {
-            res.json(resQuestion);
+            res.json(resAnswer);
           }
         })
       ;

@@ -7,6 +7,7 @@ var temperatureRouter = require('./temperatures/router');
 var noiseRouter = require('./noises/router');
 var luminosityRouter = require('./luminosities/router');
 var questionRouter = require('./questions/router');
+var answerRouter = require('./answers/router');
 
 // Init router
 app.use('/users', userRouter);
@@ -14,6 +15,7 @@ app.use('/temperatures', temperatureRouter);
 app.use('/noises', noiseRouter);
 app.use('/luminosities', luminosityRouter);
 app.use('/questions', questionRouter);
+app.use('/answers', answerRouter);
 
 // JSON description of all the route of the API
 var routesView = {
@@ -55,6 +57,12 @@ var routesView = {
     getOne: '/questions/:id',
     delete: '/questions/:id'
   },
+  answer: {
+    getAll: '/answers',
+    post: '/answers',
+    getOne: '/questions/:id',
+    delete: '/questions/:id'
+  }
 };
 
 // show description of all the API
