@@ -36,3 +36,5 @@ gulp.task('doc-gen', function(){
     dest: "src/server/"
   });
 });
+
+gulp.task('default', ['start:dev']);

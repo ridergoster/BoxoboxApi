@@ -1,16 +1,19 @@
 // Init variable
 var express = require('express');
 var app = express();
+
 var userRouter = require('./users/router');
 var temperatureRouter = require('./temperatures/router');
 var noiseRouter = require('./noises/router');
 var luminosityRouter = require('./luminosities/router');
+var questionRouter = require('./questions/router');
 
 // Init router
 app.use('/users', userRouter);
 app.use('/temperatures', temperatureRouter);
 app.use('/noises', noiseRouter);
 app.use('/luminosities', luminosityRouter);
+app.use('/questions', questionRouter);
 
 // JSON description of all the route of the API
 var routesView = {
@@ -40,16 +43,24 @@ var routesView = {
     getOne: '/luminosities/:id',
     delete: '/luminosities/:id'
   },
-  messages: {
+  message: {
     post: '/messages',
     getAll: '/messages',
     getOne: '/messages/:id'
-  }
+  },
+  question: {
+    getAll: '/questions',
+    post: '/questions',
+    getLast: '/questions/last',
+    getOne: '/questions/:id',
+    delete: '/questions/:id'
+  },
 };
 
 // show description of all the API
 app.get('/', function (req, res) {
-  res.send(routesView);
+  res.set('Content-Type', 'application/json');
+  res.send(JSON.stringify(routesView, null, 2));
 });
 
 // export dashboard API
