@@ -1,0 +1,6 @@
+{
+  "url": {
+    "dev": "mongodb://localhost:27017/boxobox-dev",
+    "prod": "mongodb://heroku_zsf673zn:abvupnfhhja4hsrgeqoebp7mp4@ds149132.mlab.com:49132/heroku_zsf673zn"
+  }
+}
