@@ -8,6 +8,8 @@ var noiseRouter = require('./noises/router');
 var luminosityRouter = require('./luminosities/router');
 var questionRouter = require('./questions/router');
 var answerRouter = require('./answers/router');
+var alarmRouter = require('./alarms/router');
+var messageRouter = require('./messages/router');
 
 // Init router
 app.use('/users', userRouter);
@@ -16,6 +18,8 @@ app.use('/noises', noiseRouter);
 app.use('/luminosities', luminosityRouter);
 app.use('/questions', questionRouter);
 app.use('/answers', answerRouter);
+app.use('/alarms', alarmRouter);
+app.use('/messages', messageRouter);
 
 // JSON description of all the route of the API
 var routesView = {
@@ -46,9 +50,9 @@ var routesView = {
     delete: '/luminosities/:id'
   },
   message: {
-    post: '/messages',
     getAll: '/messages',
-    getOne: '/messages/:id'
+    post: '/messages',
+    delete: '/messages/:id'
   },
   question: {
     getAll: '/questions',
@@ -62,6 +66,12 @@ var routesView = {
     post: '/answers',
     getOne: '/questions/:id',
     delete: '/questions/:id'
+  },
+  alarm: {
+    getAll: '/alarms',
+    post: '/alarms',
+    getOne: '/alarms/:id',
+    delete: '/alarms/:id'
   }
 };
 

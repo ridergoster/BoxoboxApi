@@ -1,18 +1,17 @@
 // Init variable
 var mongoose = require('mongoose');
-var AnswerModel = require('./model');
+var AlarmModel = require('./model');
 var _ = require('lodash');
 
 /**
  *
- * @api {get} /api/answers
- * @apiGroup Answers
+ * @api {get} /api/alarms
+ * @apiGroup Alarms
  * @apiDescription request all answers
  * @apiParam {query} [after] date you want record to be after
  * @apiParam {query} [before] date you want record to be before
  * @apiParam {query} [orderDate] order results by date [ASC, DESC]
- * @apiParam {query} [user] user you want answer from
- * @apiParam {query} [question] question you want answer from
+ * @apiParam {query} [sensor] sensor you want alarm from
  *
  */
 exports.get = function(req, res) {
@@ -28,25 +27,19 @@ exports.get = function(req, res) {
   if (_.has(req.query, 'after')) {
     _.defaultsDeep(research, { 'date': { '$gte': new Date(req.query.after) } });
   }
-  if (_.has(req.query, 'user')) {
-    _.defaultsDeep(research, { 'user': req.query.user });
-  }
-  if (_.has(req.query, 'question')) {
-    _.defaultsDeep(research, { 'question': req.query.question });
+  if (_.has(req.query, 'sensor')) {
+    _.defaultsDeep(research, { 'sensor': req.query.sensor });
   }
 
-  AnswerModel.find(research)
+  AlarmModel.find(research)
   .sort(sort)
   .populate('user')
-  .populate({
-    path: 'question',
-    populate: { path: 'user' }})
-  .exec(function(err, answers) {
+  .exec(function(err, alarms) {
       if (err) {
         res.status(400).send({ error: 'BAD_REQUEST', code: 400});
       }
       else {
-        res.json(answers);
+        res.json(alarms);
       }
     })
   ;
@@ -54,39 +47,38 @@ exports.get = function(req, res) {
 
 /**
  *
- * @api {post} /api/answers
- * @apiGroup Answers
- * @apiDescription create an answers
- * @apiParam {String} question questionId you answer
- * @apiParam {String} answer response in enum [LEFT, RIGHT]
+ * @api {post} /api/alarms
+ * @apiGroup Alarms
+ * @apiDescription create an alarm
+ * @apiParam {String} startDate date the alarm start
+ * @apiParam {String} endDate date the alarm end
+ * @apiParam {String} user user who end the alarm
+ * @apiParam {String} sensor sensor who trigger the alarm [TEMPERATURE, LUMINOSITY, NOISE]
  *
  */
 exports.post = function post(req,res) {
-  var answer = new AnswerModel();
-  answer.user = req.user._id;
-  answer.question = mongoose.Types.ObjectId(req.body.question);
-  answer.answer = req.body.answer;
-  answer.date = new Date();
+  var alarm = new AlarmModel();
+  alarm.startDate = new Date(req.body.startDate)
+  alarm.endDate = new Date(req.body.endDate)
+  alarm.user = mongoose.Types.ObjectId(req.body.user);
+  alarm.sensor = req.body.sensor;
 
-  answer.save(function(err) {
+  alarm.save(function(err) {
     if (err) {
       res.status(400).send({ error: 'BAD_REQUEST', code: 400, log: err});
     }
     else {
-      AnswerModel.findOne({_id: answer._id})
+      AlarmModel.findOne({_id: alarm._id})
         .populate('user')
-        .populate({
-          path: 'question',
-          populate: { path: 'user' }})
-        .exec(function(err, resAnswer) {
+        .exec(function(err, resAlarm) {
           if (err) {
             res.status(400).send({ error: 'BAD_REQUEST', code: 400, log: err});
           }
-          else if (!resAnswer) {
+          else if (!resAlarm) {
             res.status(404).send({ error: 'NOT_FOUND', code: 404});
           }
           else {
-            res.json(resAnswer);
+            res.json(resAlarm);
           }
         })
       ;
@@ -96,28 +88,25 @@ exports.post = function post(req,res) {
 
 /**
  *
- * @api {get} /api/answers/:id
- * @apiGroup Answers
- * @apiDescription request an answer by id
- * @apiParam {String} id id of the answer
+ * @api {get} /api/alarms/:id
+ * @apiGroup Alarms
+ * @apiDescription request an alarm by id
+ * @apiParam {String} id id of the alarm
  *
  */
 exports.getById = function getById(req, res) {
   var id = mongoose.Types.ObjectId(req.params.id);
-  AnswerModel.findOne({_id: id})
+  AlarmModel.findOne({_id: id})
     .populate('user')
-    .populate({
-      path: 'question',
-      populate: { path: 'user' }})
-    .exec(function(err, answer) {
+    .exec(function(err, alarm) {
       if (err){
         res.status(400).send({ error: 'BAD_REQUEST', code: 400});
       }
-      else if (!answer) {
+      else if (!alarm) {
         res.status(404).send({ error: 'NOT_FOUND', code: 404});
       }
       else {
-        res.json(answer);
+        res.json(alarm);
       }
     })
   ;
@@ -133,28 +122,25 @@ exports.getById = function getById(req, res) {
  */
 exports.del = function del(req, res) {
   var id = mongoose.Types.ObjectId(req.params.id);
-  AnswerModel.findOne({ _id: id }, function (err, answer) {
+  AlarmModel.findOne({ _id: id }, function (err, alarm) {
     if (err) {
       res.status(400).send({ error: 'BAD_REQUEST', code: 400, log: err});
     }
-    else if (!answer) {
+    else if (!alarm) {
       res.status(404).json({ error: 'NOT_FOUND', code: 404});
     }
     else {
-      AnswerModel.findOneAndRemove({ _id: id })
+      AlarmModel.findOneAndRemove({ _id: id })
         .populate('user')
-        .populate({
-          path: 'question',
-          populate: { path: 'user' }})
-        .exec(function (err, resAnswer) {
+        .exec(function (err, resAlarm) {
           if (err) {
             res.status(400).send({ error: 'BAD_REQUEST', code: 400});
           }
-          else if (!resAnswer) {
+          else if (!resAlarm) {
             res.status(404).send({ error: 'NOT_FOUND', code: 404});
           }
           else {
-            res.json(resAnswer);
+            res.json(resAlarm);
           }
         })
       ;

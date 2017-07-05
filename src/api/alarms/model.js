@@ -1,23 +1,26 @@
 // Init variable
 var mongoose = require('mongoose');
-var bcrypt = require('bcrypt-nodejs');
 
 // Define users schema
-var MessageSchema = new mongoose.Schema({
-  message: {
-    type: 'String',
+var AlarmSchema = new mongoose.Schema({
+  startDate: {
+    type: 'Date',
     required: true
   },
-  date: {
-    type:'Date',
+  endDate: {
+    type: 'Date',
     required: true
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
+  },
+  sensor: {
+    type: 'String',
+    enum: ['TEMPERATURE', 'LUMINOSITY', 'NOISE']
   }
 });
 
 // Export the Mongoose model
-module.exports = mongoose.model('Message', MessageSchema);
+module.exports = mongoose.model('Alarm', AlarmSchema);
