@@ -29,6 +29,7 @@ exports.get = function(req, res) {
 
   QuestionModel.find(research)
   .sort(sort)
+  .populate('user')
   .exec(function(err, questions) {
       if (err) {
         res.status(400).send({ error: 'BAD_REQUEST', code: 400});
@@ -61,6 +62,7 @@ exports.post = function post(req,res) {
     }
     else {
       QuestionModel.findOne({_id: question._id})
+        .populate('user')
         .exec(function(err, resQuestion) {
           if (err) {
             res.status(400).send({ error: 'BAD_REQUEST', code: 400, log: err});
@@ -86,6 +88,7 @@ exports.post = function post(req,res) {
  */
 exports.getLast = function getLast(req, res) {
   QuestionModel.findOne()
+  .populate('user')
   .sort({date: -1}).exec(function(err, question) {
     if (err){
       res.status(400).send({ error: 'BAD_REQUEST', code: 400});
@@ -110,6 +113,7 @@ exports.getLast = function getLast(req, res) {
 exports.getById = function getById(req, res) {
   var id = mongoose.Types.ObjectId(req.params.id);
   QuestionModel.findOne({_id: id})
+    .populate('user')
     .exec(function(err, question) {
       if (err){
         res.status(400).send({ error: 'BAD_REQUEST', code: 400});
@@ -143,6 +147,7 @@ exports.del = function del(req, res) {
     }
     else {
       QuestionModel.findOneAndRemove({ _id: id })
+        .populate('user')
         .exec(function (err, resQuestion) {
           if (err) {
             res.status(400).send({ error: 'BAD_REQUEST', code: 400});
