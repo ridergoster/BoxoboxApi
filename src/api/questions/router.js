@@ -7,6 +7,7 @@ var authController = require('../auth');
 // Init route of the router
 questionRouter.get('/', authController.isAuthenticated, controller.get);
 questionRouter.post('/', authController.isAuthenticated, controller.post);
+questionRouter.get('/random', authController.isAuthenticated, controller.getRandom);
 questionRouter.get('/last', authController.isAuthenticated, controller.getLast);
 questionRouter.get('/:id', authController.isAuthenticated, controller.getById);
 questionRouter.delete('/:id', authController.isAuthenticated, controller.del);

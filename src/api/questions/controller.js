@@ -43,6 +43,24 @@ exports.get = function(req, res) {
 
 /**
  *
+ * @api {get} /api/questions/random
+ * @apiGroup Questions
+ * @apiDescription request random question
+ *
+ */
+exports.getRandom = function(req, res) {
+  QuestionModel.findOneRandom({}, {}, {populate: 'user'}, function(err, question) {
+    if (err) {
+      res.status(400).send({ error: 'BAD_REQUEST', code: 400});
+    }
+    else {
+      res.json(question);
+    }
+  });
+};
+
+/**
+ *
  * @api {post} /api/questions
  * @apiGroup Questions
  * @apiDescription create a question

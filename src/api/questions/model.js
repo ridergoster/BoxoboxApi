@@ -1,5 +1,6 @@
 // Init variable
 var mongoose = require('mongoose');
+var random = require('mongoose-simple-random');
 
 // Define users schema
 var QuestionSchema = new mongoose.Schema({
@@ -25,6 +26,7 @@ var QuestionSchema = new mongoose.Schema({
     required: true
   }
 });
+QuestionSchema.plugin(random);
 
 // Export the Mongoose model
 module.exports = mongoose.model('Question', QuestionSchema);
