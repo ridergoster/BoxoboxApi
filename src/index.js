@@ -8,6 +8,7 @@ var env = process.env.NODE_ENV;
 // Init Socket.io
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var arduinoSocket = null;
 
 // Init mongodb connexion
 if(env === 'production') {
@@ -37,49 +38,58 @@ server.listen(port, function () {
 });
 
 io.on('connection', function (socket) {
-  var addedUser = false;
-  var rooms = [];
 
-  socket.on('add user', function (data) {
-    if (addedUser) return;
-    socket.username = data.username;
-    addedUser = true;
+  socket.on('arduino', function(data) {
+    arduinoSocket = socket.id;
   });
 
-  socket.on('join room', function (data) {
-    if (rooms.indexOf(data.roomId) > -1) return;
-    rooms.push(data.roomId);
-    socket.join(data.roomId);
-    io.in(data.roomId).emit('user joined', {
-      username: socket.username
-    });
+  socket.on('activate-alarm-luminosity', function () {
+    if (arduinoSocket) {
+      socket.broadcast.to(arduinoSocket).emit('activate-alarm-luminosity');
+    }
   });
 
-  socket.on('leave room', function (data) {
-    if (rooms.indexOf(data.roomId) < 0) return;
-    socket.leave(data.roomId);
-    rooms = _.pull(rooms, data.roomId);
-    io.in(data.roomId).emit('user left', {
-      username: socket.username
-    });
+  socket.on('activate-alarm-noise', function () {
+    if (arduinoSocket) {
+      socket.broadcast.to(arduinoSocket).emit('activate-alarm-noise');
+    }
   });
 
-  socket.on('send message', function (data) {
-    io.in(data.roomId).emit('message received', {
-      roomId: data.roomId,
-      message: data.message,
-      username: data.username
-    });
+  socket.on('desactivate-alarm-luminosity', function () {
+    if (arduinoSocket) {
+      socket.broadcast.to(arduinoSocket).emit('desactivate-alarm-luminosity');
+    }
+  });
+
+  socket.on('desactivate-alarm-noise', function () {
+    if (arduinoSocket) {
+      socket.broadcast.to(arduinoSocket).emit('desactivate-alarm-noise');
+    }
+  });
+
+  socket.on('alarm-luminosity-activate', function () {
+      socket.broadcast.emit('alarm-luminosity-activate');
+  });
+
+  socket.on('alarm-noise-activate', function () {
+      socket.broadcast.emit('alarm-noise-activate');
+  });
+
+  socket.on('alarm-luminosity-desactivate', function () {
+      socket.broadcast.emit('alarm-luminosity-desactivate');
+  });
+
+  socket.on('alarm-noise-desactivate', function () {
+      socket.broadcast.emit('alarm-noise-desactivate');
   });
 
   socket.on('disconnect', function() {
-    console.log('Got disconnect!');
-    socket.username = null;
-    _.forEach(rooms, function(room) {
-      socket.leave(room);
-    });
-    rooms = [];
-    addedUser = false;
+    if (socket.id === arduinoSocket) {
+      console.log('ARDUINO DISCONNECT !');
+      arduinoSocket = null;
+    } else {
+      console.log('user disconnect');
+    }
  });
 });
 
