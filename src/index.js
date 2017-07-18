@@ -39,7 +39,7 @@ server.listen(port, function () {
 
 io.on('connection', function (socket) {
 
-  console.log('someone is connected !', socket);
+  console.log('someone is connected !', socket.id);
 
   socket.on('arduino', function(data) {
     arduinoSocket = socket.id;
@@ -90,7 +90,7 @@ io.on('connection', function (socket) {
       console.log('ARDUINO DISCONNECT !');
       arduinoSocket = null;
     } else {
-      console.log('user disconnect');
+      console.log('user disconnect', socket.id);
     }
  });
 });

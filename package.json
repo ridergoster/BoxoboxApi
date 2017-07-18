@@ -32,7 +32,7 @@
     "mongoose-simple-random": "^0.4.1",
     "passport": "^0.3.2",
     "passport-jwt": "^2.2.1",
-    "socket.io": "^2.0.3",
+    "socket.io": "^1.7.4",
     "swagger-ui-middleware": "^1.0.0"
   },
   "devDependencies": {
