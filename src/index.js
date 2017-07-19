@@ -108,6 +108,24 @@ io.on('connection', function (socket) {
     }
   });
 
+  socket.on('set-interval-temperature', function(data) {
+    if (arduinoSocket) {
+      socket.broadcast.to(arduinoSocket).emit('set-interval-temperature', data);
+    }
+  });
+
+  socket.on('set-interval-luminosity', function(data) {
+    if (arduinoSocket) {
+      socket.broadcast.to(arduinoSocket).emit('set-interval-luminosity', data);
+    }
+  });
+
+  socket.on('set-interval-humidity', function(data) {
+    if (arduinoSocket) {
+      socket.broadcast.to(arduinoSocket).emit('set-interval-humidity', data);
+    }
+  });
+
   socket.on('disconnect', function() {
     if (socket.id === arduinoSocket) {
       console.log('ARDUINO DISCONNECT !');
