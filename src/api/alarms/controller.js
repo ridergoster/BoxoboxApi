@@ -60,7 +60,7 @@ exports.post = function post(req,res) {
   var alarm = new AlarmModel();
   alarm.startDate = new Date(req.body.startDate)
   alarm.endDate = new Date(req.body.endDate)
-  alarm.user = mongoose.Types.ObjectId(req.body.user);
+  alarm.user = req.user._id;
   alarm.sensor = req.body.sensor;
 
   alarm.save(function(err) {
