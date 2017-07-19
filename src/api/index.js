@@ -10,6 +10,7 @@ var questionRouter = require('./questions/router');
 var answerRouter = require('./answers/router');
 var alarmRouter = require('./alarms/router');
 var messageRouter = require('./messages/router');
+var humidityRouter = require('./humidities/router');
 
 // Init router
 app.use('/users', userRouter);
@@ -20,6 +21,7 @@ app.use('/questions', questionRouter);
 app.use('/answers', answerRouter);
 app.use('/alarms', alarmRouter);
 app.use('/messages', messageRouter);
+app.use('/humidities', humidityRouter);
 
 // JSON description of all the route of the API
 var routesView = {
@@ -34,6 +36,13 @@ var routesView = {
     getLast: '/temperatures/last',
     getOne: '/temperatures/:id',
     delete: '/temperatures/:id'
+  },
+  humidity: {
+    getAll: '/humidities',
+    post: '/humidities',
+    getLast: '/humidities/last',
+    getOne: '/humidities/:id',
+    delete: '/humidities/:id'
   },
   noise: {
     getAll: '/noises',
