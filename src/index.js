@@ -43,6 +43,7 @@ io.on('connection', function (socket) {
 
   socket.on('arduino', function(data) {
     arduinoSocket = socket.id;
+    io.sockets.emit('boxobox-online');
   });
 
   socket.on('activate-alarm-luminosity', function () {
@@ -100,6 +101,7 @@ io.on('connection', function (socket) {
   socket.on('disconnect', function() {
     if (socket.id === arduinoSocket) {
       console.log('ARDUINO DISCONNECT !');
+      io.sockets.emit('boxobox-offline');
       arduinoSocket = null;
     } else {
       console.log('user disconnect', socket.id);
