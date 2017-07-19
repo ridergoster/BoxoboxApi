@@ -96,7 +96,17 @@ io.on('connection', function (socket) {
 
   socket.on('alarm-stop', function(data) {
     socket.broadcast.emit('alarm-stop', data);
-  })
+  });
+
+  socket.on('question-answer', function(data) {
+    socket.broadcast.emit('question-answer', data);
+  });
+
+  socket.on('question-create', function(data) {
+    if (arduinoSocket) {
+      socket.broadcast.to(arduinoSocket).emit('question-create');
+    }
+  });
 
   socket.on('disconnect', function() {
     if (socket.id === arduinoSocket) {
