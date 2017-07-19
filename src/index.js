@@ -85,6 +85,18 @@ io.on('connection', function (socket) {
       socket.broadcast.emit('alarm-noise-desactivate');
   });
 
+  socket.on('alarm-noise-trigger', function() {
+    socket.broadcast.emit('alarm-noise-trigger');
+  });
+
+  socket.on('alarm-luminosity-trigger', function() {
+    socket.broadcast.emit('alarm-luminosity-trigger');
+  });
+
+  socket.on('alarm-stop', function(data) {
+    socket.broadcast.emit('alarm-stop', data);
+  })
+
   socket.on('disconnect', function() {
     if (socket.id === arduinoSocket) {
       console.log('ARDUINO DISCONNECT !');
