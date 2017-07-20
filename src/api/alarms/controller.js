@@ -16,16 +16,16 @@ var _ = require('lodash');
  */
 exports.get = function(req, res) {
   var research = {};
-  var sort = {'date': -1};
+  var sort = {'endDate': -1};
 
   if (_.has(req.query, 'orderDate')) {
-    sort.date = req.query.orderDate === 'ASC' ? 1 : -1;
+    sort.endDate = req.query.orderDate === 'ASC' ? 1 : -1;
   }
   if (_.has(req.query, 'before')) {
-    _.defaultsDeep(research, { 'date': { '$lt': new Date(req.query.before) } });
+    _.defaultsDeep(research, { 'endDate': { '$lt': new Date(req.query.before) } });
   }
   if (_.has(req.query, 'after')) {
-    _.defaultsDeep(research, { 'date': { '$gte': new Date(req.query.after) } });
+    _.defaultsDeep(research, { 'endDate': { '$gte': new Date(req.query.after) } });
   }
   if (_.has(req.query, 'sensor')) {
     _.defaultsDeep(research, { 'sensor': req.query.sensor });
